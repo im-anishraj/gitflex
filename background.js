@@ -185,6 +185,7 @@ async function calculateProgress(token) {
     const statsQuery = `
       query {
         viewer {
+          login
           followers { totalCount }
           repositories(ownerAffiliations: OWNER) { totalCount }
           contributionsCollection {
@@ -196,6 +197,7 @@ async function calculateProgress(token) {
     const statsData = await fetchGraphQL(statsQuery, token);
     const viewer = statsData.data?.viewer || {};
     results.profileStats = {
+      username: viewer.login || 'Unknown',
       followers: viewer.followers?.totalCount || 0,
       repos: viewer.repositories?.totalCount || 0,
       contributions: viewer.contributionsCollection?.contributionCalendar?.totalContributions || 0

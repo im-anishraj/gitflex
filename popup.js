@@ -197,6 +197,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      chrome.storage.local.remove('github_pat', () => {
+        showAuthSection();
+      });
+    });
+  }
+
   refreshBtn.addEventListener('click', () => {
     fetchAndRenderProgress();
   });
@@ -241,6 +250,10 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMsg.textContent = response.error;
         errorMsg.classList.remove('hidden');
         return;
+      }
+      
+      if (response.data && response.data.profileStats && response.data.profileStats.username) {
+        document.getElementById('user-profile-name').textContent = '@' + response.data.profileStats.username;
       }
 
       renderBadges(response.data);
