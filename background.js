@@ -25,6 +25,12 @@ const MILESTONES = {
   ],
   yolo: [
     { name: 'Unlocked', count: 1 }
+  ],
+  quickdraw: [
+    { name: 'Unlocked', count: 1 }
+  ],
+  publicSponsor: [
+    { name: 'Unlocked', count: 1 }
   ]
 };
 
@@ -194,7 +200,31 @@ async function calculateProgress(token) {
     results.yolo = { error: e.message };
   }
 
-  // 5. Profile Stats
+  // Quickdraw Badge
+  try {
+    const qData = await fetchGitHubAPI('/search/issues?q=author:@me+is:closed&sort=created&order=desc&per_page=100', token);
+    let earnedQuickdraw = 0;
+    if (qData.items) {
+      for (const item of qData.items) {
+        if (item.created_at && item.closed_at) {
+          const created = new Date(item.created_at);
+          const closed = new Date(item.closed_at);
+          const diffMinutes = (closed - created) / (1000 * 60);
+          if (diffMinutes <= 5) {
+            earnedQuickdraw = 1;
+            break;
+          }
+        }
+      }
+    }
+    const info = getMilestoneInfo(earnedQuickdraw, MILESTONES.quickdraw);
+    results.quickdraw = { count: earnedQuickdraw, ...info };
+  } catch (e) {
+    console.error("Quickdraw error:", e);
+    results.quickdraw = { error: e.message };
+  }
+
+  // 5. Profile Stats & Public Sponsor
   try {
     const statsQuery = `
       query {
@@ -205,11 +235,18 @@ async function calculateProgress(token) {
           contributionsCollection {
             contributionCalendar { totalContributions }
           }
+          sponsorshipsAsSponsor(first: 1) { totalCount }
         }
       }
     `;
     const statsData = await fetchGraphQL(statsQuery, token);
     const viewer = statsData.data?.viewer || {};
+    
+    // Calculate Public Sponsor
+    const sponsorCount = viewer.sponsorshipsAsSponsor?.totalCount || 0;
+    const sponsorInfo = getMilestoneInfo(sponsorCount > 0 ? 1 : 0, MILESTONES.publicSponsor);
+    results.publicSponsor = { count: sponsorCount > 0 ? 1 : 0, ...sponsorInfo };
+
     results.profileStats = {
       username: viewer.login || 'Unknown',
       followers: viewer.followers?.totalCount || 0,
