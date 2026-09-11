@@ -6,9 +6,15 @@
   "permissions": [
     "storage"
   ],
+  "icons": {
+    "16": "gitflex-icon.png",
+    "48": "gitflex-icon.png",
+    "128": "gitflex-icon.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "GitFlex"
+    "default_title": "GitFlex",
+    "default_icon": "gitflex-icon.png"
   },
   "background": {
     "service_worker": "background.js"

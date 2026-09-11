@@ -8,8 +8,9 @@
 <body>
   <div id="app">
     <div id="auth-section" class="section hidden">
-      <div class="header" style="margin-top: 20px;">
-        <h2>GitFlex</h2>
+      <div class="header" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+        <img src="gitflex-icon.png" alt="GitFlex Icon" width="64" height="64" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+        <h2 style="margin: 0;">GitFlex</h2>
       </div>
       <p class="instruction">Login with GitHub to securely calculate your badges and track private contributions.</p>
       <button id="login-btn" class="primary-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -23,7 +24,10 @@
       
       <!-- Sidebar Navigation -->
       <nav id="sidebar">
-        <div class="sidebar-title">GitFlex</div>
+        <div class="sidebar-title" style="display: flex; align-items: center; gap: 10px;">
+          <img src="gitflex-icon.png" alt="Icon" width="28" height="28" style="border-radius: 6px;">
+          GitFlex
+        </div>
         <ul class="nav-links">
           <li data-view="badges-view" class="nav-item active">Badges</li>
           <li data-view="stars-view" class="nav-item">Star Analytics</li>
