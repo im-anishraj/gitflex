@@ -282,6 +282,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true; // Required for async sendResponse
   }
+  
+  if (request.action === 'deviceFlowSuccess') {
+    chrome.storage.local.get(['pending_device_code', 'client_id'], async (data) => {
+      if (data.pending_device_code && data.client_id) {
+        try {
+          const response = await fetch('https://github.com/login/oauth/access_token', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              client_id: data.client_id,
+              device_code: data.pending_device_code,
+              grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
+            })
+          });
+          const tokenData = await response.json();
+          if (tokenData.access_token) {
+            chrome.storage.local.set({ 'github_pat': tokenData.access_token });
+            chrome.storage.local.remove(['pending_device_code', 'client_id']);
+          }
+        } catch (e) {
+          console.error("Error exchanging token on success:", e);
+        }
+      }
+    });
+    return true;
+  }
 });
 
 function startDeviceFlowPolling(device_code, intervalSeconds, client_id) {

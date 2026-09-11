@@ -4,7 +4,8 @@
   "version": "1.0",
   "description": "Calculates exactly how close you are to your next tiered GitHub badge.",
   "permissions": [
-    "storage"
+    "storage",
+    "notifications"
   ],
   "icons": {
     "16": "gitflex-icon.png",
@@ -22,5 +23,21 @@
   "host_permissions": [
     "https://api.github.com/*",
     "https://github.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://github.com/login/device/success*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["gitflex-icon.png"],
+      "matches": ["https://github.com/*"]
+    }
   ]
 }

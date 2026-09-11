@@ -318,3 +318,8 @@ button:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
 }
+
+.confidence-exact { background: rgba(46, 160, 67, 0.15); color: #3fb950; border: 1px solid rgba(46, 160, 67, 0.4); }
+.confidence-high-confidence { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); }
+.confidence-estimated { background: rgba(210, 153, 34, 0.15); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.4); }
+
