@@ -300,14 +300,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (tokenData.access_token) {
             chrome.storage.local.set({ 'github_pat': tokenData.access_token });
             chrome.storage.local.remove(['pending_device_code', 'client_id']);
-            
-            chrome.notifications.create('gitflex-auth-success', {
-              type: 'basic',
-              iconUrl: 'gitflex-icon.png',
-              title: 'GitFlex Connected!',
-              message: 'Congratulations, you are all set! Click the extension icon to view your stats.',
-              priority: 2
-            });
           }
         } catch (e) {
           console.error("Error exchanging token on success:", e);

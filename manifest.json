@@ -33,5 +33,11 @@
         "content.js"
       ]
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["gitflex-icon.png"],
+      "matches": ["https://github.com/*"]
+    }
   ]
 }
