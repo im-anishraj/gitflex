@@ -22,18 +22,24 @@
 
     <div id="main-section" class="hidden">
       
-      <!-- Sidebar Navigation -->
-      <nav id="sidebar">
-        <div class="sidebar-title" style="display: flex; align-items: center; gap: 10px;">
-          <img src="gitflex-icon.png" alt="Icon" width="28" height="28" style="border-radius: 6px;">
-          GitFlex
+      <nav id="sidebar" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div class="sidebar-title" style="display: flex; align-items: center; gap: 10px;">
+            <img src="gitflex-icon.png" alt="Icon" width="28" height="28" style="border-radius: 6px;">
+            GitFlex
+          </div>
+          <ul class="nav-links">
+            <li data-view="badges-view" class="nav-item active">Badges</li>
+            <li data-view="stars-view" class="nav-item">Star Analytics</li>
+            <li data-view="stats-view" class="nav-item">Profile Stats</li>
+            <li data-view="about-view" class="nav-item">About Us</li>
+          </ul>
         </div>
-        <ul class="nav-links">
-          <li data-view="badges-view" class="nav-item active">Badges</li>
-          <li data-view="stars-view" class="nav-item">Star Analytics</li>
-          <li data-view="stats-view" class="nav-item">Profile Stats</li>
-          <li data-view="about-view" class="nav-item">About Us</li>
-        </ul>
+        
+        <div style="padding: 15px; border-top: 1px solid #30363d;">
+          <div id="user-profile-name" style="font-size: 13px; color: #c9d1d9; margin-bottom: 10px; text-align: center; font-weight: bold; word-break: break-all;"></div>
+          <button id="logout-btn" style="width: 100%; padding: 8px; background: transparent; border: 1px solid #f85149; color: #f85149; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s ease;">Log Out</button>
+        </div>
       </nav>
 
       <!-- Content Area -->
