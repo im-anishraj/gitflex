@@ -2,7 +2,8 @@ const BADGE_INFO = {
   pullShark: { name: 'Pull Shark', desc: 'Merged PRs' },
   starstruck: { name: 'Starstruck', desc: 'Max Repo Stars' },
   pairExtraordinaire: { name: 'Pair Extraordinaire', desc: 'Co-authored Commits' },
-  galaxyBrain: { name: 'Galaxy Brain', desc: 'Accepted Answers' }
+  galaxyBrain: { name: 'Galaxy Brain', desc: 'Accepted Answers' },
+  yolo: { name: 'YOLO', desc: 'Unreviewed PRs' }
 };
 
 const GITHUB_CLIENT_ID = 'Ov23liWc0aNED1kEvaSD';
