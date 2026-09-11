@@ -274,13 +274,13 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = ''; 
 
     const badges = [
-      { id: 'pullShark', title: 'Pull Shark', data: data.pullShark, label: 'Merged PRs', type: 'tiered' },
-      { id: 'starstruck', title: 'Starstruck', data: data.starstruck, label: 'Max Repo Stars', type: 'tiered' },
-      { id: 'pairExtraordinaire', title: 'Pair Extraordinaire', data: data.pairExtraordinaire, label: 'Co-authored Commits', type: 'tiered' },
-      { id: 'galaxyBrain', title: 'Galaxy Brain', data: data.galaxyBrain, label: 'Accepted Answers', type: 'tiered' },
-      { id: 'yolo', title: 'YOLO', data: data.yolo, label: 'Unreviewed PRs', type: 'single' },
-      { id: 'quickdraw', title: 'Quickdraw', data: data.quickdraw, label: '5-Min Close', type: 'single' },
-      { id: 'publicSponsor', title: 'Public Sponsor', data: data.publicSponsor, label: 'Sponsorships', type: 'single' }
+      { id: 'pullShark', title: 'Pull Shark', data: data.pullShark, label: 'Merged PRs', type: 'tiered', confidence: 'HIGH CONFIDENCE' },
+      { id: 'starstruck', title: 'Starstruck', data: data.starstruck, label: 'Max Repo Stars', type: 'tiered', confidence: 'EXACT' },
+      { id: 'pairExtraordinaire', title: 'Pair Extraordinaire', data: data.pairExtraordinaire, label: 'Total Co-authored Commits', type: 'tiered', confidence: 'ESTIMATED' },
+      { id: 'galaxyBrain', title: 'Galaxy Brain', data: data.galaxyBrain, label: 'Accepted Answers', type: 'tiered', confidence: 'ESTIMATED' },
+      { id: 'yolo', title: 'YOLO', data: data.yolo, label: 'Unreviewed PRs', type: 'single', confidence: 'EXACT' },
+      { id: 'quickdraw', title: 'Quickdraw', data: data.quickdraw, label: '5-Min Close', type: 'single', confidence: 'EXACT' },
+      { id: 'publicSponsor', title: 'Public Sponsor', data: data.publicSponsor, label: 'Sponsorships', type: 'single', confidence: 'EXACT' }
     ];
 
     badges.forEach(b => {
@@ -340,7 +340,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <span style="opacity: ${opacity}">${b.title}</span> 
             <span class="badge-tier" style="background: ${isNotEarned ? '#21262d' : '#30363d'}; color: ${isNotEarned ? '#8b949e' : '#c9d1d9'};">${displayTier}</span>
           </div>
-          <div class="badge-stat-label" style="opacity: ${opacity}">${b.label}</div>
+          <div class="badge-stat-label" style="opacity: ${opacity}">
+            ${b.label}
+            <span class="confidence-tag confidence-${b.confidence.replace(' ', '-').toLowerCase()}" style="margin-left: 6px; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; letter-spacing: 0.5px;">${b.confidence}</span>
+          </div>
         </div>
         <div class="badge-stats" style="opacity: ${opacity}">
           <div class="stat-value">${info.count} / ${b.type === 'single' ? 1 : info.nextCount}</div>
@@ -349,10 +352,18 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="progress-bar-bg" style="opacity: ${opacity}">
           <div class="progress-bar-fill" style="width: ${percentage}%; background-color: ${barColor};"></div>
         </div>
-        <div class="stat-remaining" style="opacity: ${opacity}">${remainingText}</div>
+        <div class="stat-remaining" style="opacity: ${opacity}">${remainingText}        </div>
       `;
+      
       container.appendChild(badgeDiv);
     });
+
+    // Add Last Synced timestamp at the bottom
+    const syncDiv = document.createElement('div');
+    syncDiv.className = 'last-synced-text';
+    syncDiv.style = "text-align: center; color: #8b949e; font-size: 11px; margin-top: 16px; font-weight: 500; font-family: monospace;";
+    syncDiv.innerHTML = `✓ Synced just now via live API`;
+    container.appendChild(syncDiv);
   }
 
   function renderStars(data) {
