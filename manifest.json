@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "GitFlex",
+  "version": "1.0",
+  "description": "Calculates exactly how close you are to your next tiered GitHub badge.",
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GitFlex"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://api.github.com/*",
+    "https://github.com/*"
+  ]
+}
