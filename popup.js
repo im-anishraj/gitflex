@@ -335,14 +335,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const opacity = isNotEarned ? '0.6' : '1';
 
       badgeDiv.innerHTML = `
-        <div class="badge-header">
-          <div class="badge-title">
+        <div class="badge-header" style="align-items: flex-start;">
+          <div class="badge-title" style="flex-wrap: wrap;">
             <span style="opacity: ${opacity}">${b.title}</span> 
             <span class="badge-tier" style="background: ${isNotEarned ? '#21262d' : '#30363d'}; color: ${isNotEarned ? '#8b949e' : '#c9d1d9'};">${displayTier}</span>
           </div>
-          <div class="badge-stat-label" style="opacity: ${opacity}">
-            ${b.label}
-            <span class="confidence-tag confidence-${b.confidence.replace(' ', '-').toLowerCase()}" style="margin-left: 6px; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; letter-spacing: 0.5px;">${b.confidence}</span>
+          <div class="badge-stat-label" style="opacity: ${opacity}; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; max-width: 45%;">
+            <span style="line-height: 1.2;">${b.label}</span>
+            <span class="confidence-tag confidence-${b.confidence.replace(' ', '-').toLowerCase()}" style="font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap;">${b.confidence}</span>
           </div>
         </div>
         <div class="badge-stats" style="opacity: ${opacity}">
