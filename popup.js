@@ -2,7 +2,10 @@ const BADGE_INFO = {
   pullShark: { name: 'Pull Shark', desc: 'Merged PRs' },
   starstruck: { name: 'Starstruck', desc: 'Max Repo Stars' },
   pairExtraordinaire: { name: 'Pair Extraordinaire', desc: 'Co-authored Commits' },
-  galaxyBrain: { name: 'Galaxy Brain', desc: 'Accepted Answers' }
+  galaxyBrain: { name: 'Galaxy Brain', desc: 'Accepted Answers' },
+  yolo: { name: 'YOLO', desc: 'Unreviewed PRs' },
+  quickdraw: { name: 'Quickdraw', desc: '5-Min Close' },
+  publicSponsor: { name: 'Public Sponsor', desc: 'Sponsorships' }
 };
 
 const GITHUB_CLIENT_ID = 'Ov23liWc0aNED1kEvaSD';
@@ -270,52 +273,86 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('badges-container');
     container.innerHTML = ''; 
 
-    for (const [key, info] of Object.entries(data)) {
-      if (key === 'profileStats') continue;
-      const badgeMeta = BADGE_INFO[key];
-      if (!badgeMeta) continue;
+    const badges = [
+      { id: 'pullShark', title: 'Pull Shark', data: data.pullShark, label: 'Merged PRs', type: 'tiered' },
+      { id: 'starstruck', title: 'Starstruck', data: data.starstruck, label: 'Max Repo Stars', type: 'tiered' },
+      { id: 'pairExtraordinaire', title: 'Pair Extraordinaire', data: data.pairExtraordinaire, label: 'Co-authored Commits', type: 'tiered' },
+      { id: 'galaxyBrain', title: 'Galaxy Brain', data: data.galaxyBrain, label: 'Accepted Answers', type: 'tiered' },
+      { id: 'yolo', title: 'YOLO', data: data.yolo, label: 'Unreviewed PRs', type: 'single' },
+      { id: 'quickdraw', title: 'Quickdraw', data: data.quickdraw, label: '5-Min Close', type: 'single' },
+      { id: 'publicSponsor', title: 'Public Sponsor', data: data.publicSponsor, label: 'Sponsorships', type: 'single' }
+    ];
+
+    badges.forEach(b => {
+      const info = b.data;
+      if (!info) return;
 
       if (info.error) {
         container.innerHTML += `
           <div class="badge-card">
             <div class="badge-header">
-              <div class="badge-title"><strong>${badgeMeta.name}</strong></div>
+              <div class="badge-title"><strong>${b.title}</strong></div>
             </div>
             <div class="error-msg">Error: ${info.error}</div>
           </div>
         `;
-        continue;
+        return;
       }
       
-      const isMaxed = info.nextTier === "Maxed";
+      const badgeDiv = document.createElement('div');
+      badgeDiv.className = 'badge-card';
+      
       let percentage = 0;
-      if (isMaxed) {
-        percentage = 100;
+      let nextText = '';
+      let remainingText = '';
+      let isNotEarned = false;
+      let displayTier = info.currentTier ? info.currentTier.toUpperCase() : 'NONE';
+      
+      if (b.type === 'single') {
+        if (info.count >= 1) {
+          percentage = 100;
+          nextText = 'Earned';
+          remainingText = 'Badge Unlocked!';
+          displayTier = 'EARNED';
+        } else {
+          percentage = 0;
+          nextText = 'Not Earned';
+          remainingText = 'Criteria not met';
+          displayTier = 'NOT EARNED';
+          isNotEarned = true;
+        }
       } else {
+        if (info.count === 0 && info.currentTier === 'None') {
+          isNotEarned = true;
+          displayTier = 'NOT EARNED';
+        }
         percentage = Math.min(100, Math.round((info.count / info.nextCount) * 100));
+        nextText = info.nextTier === 'Maxed' ? 'Max Tier' : `Next: ${info.nextTier}`;
+        remainingText = info.nextTier === 'Maxed' ? 'All tiers unlocked!' : `${info.remaining} left to go!`;
       }
 
-      const html = `
-        <div class="badge-card badge-${key}">
-          <div class="badge-header">
-            <div class="badge-title">
-              <strong>${badgeMeta.name}</strong> 
-              <span class="badge-tier tier-${info.currentTier.toLowerCase()}">${info.currentTier}</span>
-            </div>
-            <div class="badge-desc">${badgeMeta.desc}</div>
+      const barColor = isNotEarned ? '#484f58' : 'var(--accent-color)';
+      const opacity = isNotEarned ? '0.6' : '1';
+
+      badgeDiv.innerHTML = `
+        <div class="badge-header">
+          <div class="badge-title">
+            <span style="opacity: ${opacity}">${b.title}</span> 
+            <span class="badge-tier" style="background: ${isNotEarned ? '#21262d' : '#30363d'}; color: ${isNotEarned ? '#8b949e' : '#c9d1d9'};">${displayTier}</span>
           </div>
-          <div class="progress-info">
-            <span>${info.count} / ${isMaxed ? "Max" : info.nextCount}</span>
-            ${!isMaxed ? `<span class="next-tier">Next: ${info.nextTier}</span>` : ''}
-          </div>
-          <div class="progress-bar-container">
-            <div class="progress-bar ${isMaxed ? 'tier-max' : ''}" style="width: ${percentage}%"></div>
-          </div>
-          ${info.remaining > 0 ? `<div class="remaining-text">${info.remaining} left to go!</div>` : ''}
+          <div class="badge-stat-label" style="opacity: ${opacity}">${b.label}</div>
         </div>
+        <div class="badge-stats" style="opacity: ${opacity}">
+          <div class="stat-value">${info.count} / ${b.type === 'single' ? 1 : info.nextCount}</div>
+          <div class="stat-next">${nextText}</div>
+        </div>
+        <div class="progress-bar-bg" style="opacity: ${opacity}">
+          <div class="progress-bar-fill" style="width: ${percentage}%; background-color: ${barColor};"></div>
+        </div>
+        <div class="stat-remaining" style="opacity: ${opacity}">${remainingText}</div>
       `;
-      container.innerHTML += html;
-    }
+      container.appendChild(badgeDiv);
+    });
   }
 
   function renderStars(data) {

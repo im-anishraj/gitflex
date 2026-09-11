@@ -22,6 +22,15 @@ const MILESTONES = {
     { name: 'Bronze', count: 8 },
     { name: 'Silver', count: 16 },
     { name: 'Gold', count: 32 }
+  ],
+  yolo: [
+    { name: 'Unlocked', count: 1 }
+  ],
+  quickdraw: [
+    { name: 'Unlocked', count: 1 }
+  ],
+  publicSponsor: [
+    { name: 'Unlocked', count: 1 }
   ]
 };
 
@@ -113,7 +122,7 @@ async function calculateProgress(token) {
     const starQuery = `
       query {
         viewer {
-          repositories(first: 100, ownerAffiliations: OWNER, orderBy: {field: STARGAZERS, direction: DESC}) {
+          repositories(first: 100, ownerAffiliations: OWNER, isFork: false, orderBy: {field: STARGAZERS, direction: DESC}) {
             nodes {
               name
               stargazerCount
@@ -180,7 +189,42 @@ async function calculateProgress(token) {
     results.galaxyBrain = { error: e.message };
   }
 
-  // 5. Profile Stats
+  // YOLO Badge
+  try {
+    const yoloData = await fetchGitHubAPI('/search/issues?q=is:pr+is:merged+author:@me+review:none', token);
+    const count = yoloData.total_count || 0;
+    const info = getMilestoneInfo(count, MILESTONES.yolo);
+    results.yolo = { count, ...info };
+  } catch (e) {
+    console.error("YOLO error:", e);
+    results.yolo = { error: e.message };
+  }
+
+  // Quickdraw Badge
+  try {
+    const qData = await fetchGitHubAPI('/search/issues?q=author:@me+is:closed&sort=created&order=desc&per_page=100', token);
+    let earnedQuickdraw = 0;
+    if (qData.items) {
+      for (const item of qData.items) {
+        if (item.created_at && item.closed_at) {
+          const created = new Date(item.created_at);
+          const closed = new Date(item.closed_at);
+          const diffMinutes = (closed - created) / (1000 * 60);
+          if (diffMinutes <= 5) {
+            earnedQuickdraw = 1;
+            break;
+          }
+        }
+      }
+    }
+    const info = getMilestoneInfo(earnedQuickdraw, MILESTONES.quickdraw);
+    results.quickdraw = { count: earnedQuickdraw, ...info };
+  } catch (e) {
+    console.error("Quickdraw error:", e);
+    results.quickdraw = { error: e.message };
+  }
+
+  // 5. Profile Stats & Public Sponsor
   try {
     const statsQuery = `
       query {
@@ -191,11 +235,18 @@ async function calculateProgress(token) {
           contributionsCollection {
             contributionCalendar { totalContributions }
           }
+          sponsorshipsAsSponsor(first: 1) { totalCount }
         }
       }
     `;
     const statsData = await fetchGraphQL(statsQuery, token);
     const viewer = statsData.data?.viewer || {};
+    
+    // Calculate Public Sponsor
+    const sponsorCount = viewer.sponsorshipsAsSponsor?.totalCount || 0;
+    const sponsorInfo = getMilestoneInfo(sponsorCount > 0 ? 1 : 0, MILESTONES.publicSponsor);
+    results.publicSponsor = { count: sponsorCount > 0 ? 1 : 0, ...sponsorInfo };
+
     results.profileStats = {
       username: viewer.login || 'Unknown',
       followers: viewer.followers?.totalCount || 0,
